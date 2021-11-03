@@ -1,12 +1,12 @@
-import { useEffect, useState } from "react";
-import "./App.css";
-import { xrplClient } from "./XrplApiSandbox";
+import { useEffect, useState } from 'react';
+import './App.css';
+import { xrplClient } from './XrplApiSandbox';
 import {
   createConditionalEscrow,
   parseEscrowDataFromMemos,
-} from "./bank/manageEscrow";
+} from './bank/manageEscrow';
 
-const ORACLE_WALLET = "rDDqrVxbVgyxkit5jEd84ndwi1YpxGqgL7";
+const ORACLE_WALLET = 'rgbv6kNj77J9DTjZM39Q5xi1pzufv13g1';
 const POT_AMOUNT = 100;
 
 // Can import and run TS scripts this way if so desired
@@ -23,7 +23,7 @@ function App() {
     generateBankWalletRequest.then((result) => {
       setLogs((logState) => [
         result,
-        "Created faucet wallet for Bank",
+        'Created faucet wallet for Bank',
         ...logState,
       ]);
     });
@@ -35,8 +35,8 @@ function App() {
         accounts: [ORACLE_WALLET],
       },
       async (event: any) => {
-        if ("AccountSet" === event["transaction"].TransactionType) {
-          const memos = event["transaction"].Memos;
+        if ('AccountSet' === event['transaction'].TransactionType) {
+          const memos = event['transaction'].Memos;
           const { playerAddress, condition } = parseEscrowDataFromMemos(memos);
 
           if (playerAddress && condition) {
@@ -45,7 +45,7 @@ function App() {
                 playerAddress,
                 condition,
               },
-              "Received new Escrow condition",
+              'Received new Escrow condition',
               ...logState,
             ]);
 
@@ -57,7 +57,7 @@ function App() {
 
             setLogs((logState) => [
               playerEscrow,
-              "Created new Player Escrow",
+              'Created new Player Escrow',
               ...logState,
             ]);
           }
@@ -70,19 +70,19 @@ function App() {
   return (
     <div className="App">
       <img
-        src={process.env.PUBLIC_URL + "/piggy_bank.jpg"}
+        src={process.env.PUBLIC_URL + '/piggy_bank.jpg'}
         className="App-logo"
         alt="logo"
       />
       <div className="App-logs">
         {logs.map((log) => {
-          if (typeof log === "string") {
+          if (typeof log === 'string') {
             return (
               <p key={Math.random()} className="App-console-log">
                 {log}
               </p>
             );
-          } else if (typeof log === "object") {
+          } else if (typeof log === 'object') {
             return (
               <div key={Math.random()}>
                 <pre>{JSON.stringify(log, null, 2)}</pre>
