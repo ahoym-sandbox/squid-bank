@@ -73,13 +73,13 @@ function App() {
       <div className="Squid">
         <Circle />
         <Triangle />
-        <Square />
+        <img
+          src={process.env.PUBLIC_URL + '/piggy_bank.jpg'}
+          className="App-logo"
+          alt="logo"
+        />
       </div>
-      <img
-        src={process.env.PUBLIC_URL + '/piggy_bank.jpg'}
-        className="App-logo"
-        alt="logo"
-      />
+
       <div className="App-logs">
         {logs.map((log) => {
           if (typeof log === 'string') {
