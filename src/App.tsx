@@ -34,7 +34,7 @@ function App() {
       {
         accounts: [ORACLE_WALLET],
       },
-      async (event: any) => {
+      (event: any) => {
         if ('AccountSet' === event['transaction'].TransactionType) {
           const memos = event['transaction'].Memos;
           const { playerAddress, condition } = parseEscrowDataFromMemos(memos);
@@ -49,17 +49,15 @@ function App() {
               ...logState,
             ]);
 
-            const playerEscrow = await createConditionalEscrow(
-              POT_AMOUNT,
-              playerAddress,
-              condition
+            createConditionalEscrow(POT_AMOUNT, playerAddress, condition).then(
+              (playerEscrow) => {
+                setLogs((logState) => [
+                  playerEscrow,
+                  'Created new Player Escrow',
+                  ...logState,
+                ]);
+              }
             );
-
-            setLogs((logState) => [
-              playerEscrow,
-              'Created new Player Escrow',
-              ...logState,
-            ]);
           }
         }
         return Promise.resolve(event);
