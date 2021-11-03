@@ -7,7 +7,7 @@ import {
   parseEscrowDataFromMemos,
 } from "./bank/manageEscrow";
 
-const ORACLE_WALLET = "rnn6aoehGjuibE1BFXbjFWnzFdeN3EmRix";
+const ORACLE_WALLET = "rDDqrVxbVgyxkit5jEd84ndwi1YpxGqgL7";
 const POT_AMOUNT = 100;
 
 // Can import and run TS scripts this way if so desired
