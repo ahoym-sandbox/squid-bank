@@ -38,6 +38,9 @@ export class RippleAPIClient {
     this.connect();
   }
 
+  public api = () => this.#api;
+  public wallet = () => this.#wallet;
+
   private connect = () => {
     if (this.#api.isConnected()) {
       return Promise.resolve(true);
@@ -46,8 +49,17 @@ export class RippleAPIClient {
     return this.#api.connect();
   };
 
-  public api = () => this.#api;
-  public wallet = () => this.#wallet;
+  public disconnect = () => {
+    if (!this.#api.isConnected()) {
+      return Promise.resolve(true);
+    }
+
+    return this.#api.disconnect();
+  };
+
+  public setWallet = (wallet: FaucetWallet) => {
+    this.#wallet = wallet;
+  };
 
   public connectAndGetWallet = async () => {
     if (this.#wallet === null) {
@@ -191,10 +203,12 @@ export class RippleAPIClient {
     return this.#api.getTransaction(txId);
   };
 
-  public subscribeToAccountTransactions = (
+  public subscribeToAccountTransactions = async (
     subscribeOptions: SubscribeOptions,
-    onTransaction: (event: TxEvent) => Promise<unknown>
+    onTransaction: (event: TxEvent) => Promise<unknown> | unknown
   ) => {
+    await this.connect();
+
     this.#api.request('subscribe', {
       accounts: subscribeOptions.accounts,
     });
@@ -272,9 +286,23 @@ export function generateTestnetXrplClient() {
   return new RippleAPIClient({ server: TEST_NET });
 }
 
+const TEST_NET_WALLET_DO_NOT_USE_IN_PROD_OR_YOURE_OWARI_DA = {
+  account: {
+    xAddress: 'TVrkZDAHSomRh5H7uTh5wCgyV5Gjjnvt6kPyaupGBv9sY2c',
+    secret: 'shHiq8q31MrWABiX6S6NB7AQAi1zj',
+    classicAddress: 'rUEqxgBLfgoqZWC8B94shLXUV8pUxhwrnX',
+    address: 'rUEqxgBLfgoqZWC8B94shLXUV8pUxhwrnX',
+  },
+  amount: 1000, // HEY! LISTEN! Does not reflect actual values in ledger
+  balance: 1000, // HEY! LISTEN! Does not reflect actual values in ledger
+};
+
 export const xrplClient = generateTestnetXrplClient();
+xrplClient.setWallet(TEST_NET_WALLET_DO_NOT_USE_IN_PROD_OR_YOURE_OWARI_DA);
+xrplClient.generateFaucetWallet();
+
 export const xrplClientTwo = generateTestnetXrplClient();
-const publicRippleAPI = new RippleAPI({ server: TEST_NET });
+const publicRippleAPI = generateTestnetXrplClient();
 
 // Place RippleAPI on the window so developers can experiment with
 // it in the web console
