@@ -5,6 +5,9 @@ import {
   createConditionalEscrow,
   parseEscrowDataFromMemos,
 } from './bank/manageEscrow';
+import { Circle } from './shapes/Circle';
+import { Triangle } from './shapes/Triangle';
+import { Square } from './shapes/Square';
 
 const ORACLE_WALLET = 'rgbv6kNj77J9DTjZM39Q5xi1pzufv13g1';
 const POT_AMOUNT = 100;
@@ -67,6 +70,11 @@ function App() {
 
   return (
     <div className="App">
+      <div className="Squid">
+        <Circle />
+        <Triangle />
+        <Square />
+      </div>
       <img
         src={process.env.PUBLIC_URL + '/piggy_bank.jpg'}
         className="App-logo"

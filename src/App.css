@@ -43,3 +43,34 @@
   font-size: 14px;
   color: darkorange;
 }
+
+.Circle {
+  animation: fadein 1s ease-in;
+}
+
+.Triangle {
+  margin: 0 30px;
+  animation: fadein 2s ease-in;
+}
+
+.Square {
+  animation: fadein 3s ease-in;
+}
+
+@keyframes fadein {
+  0% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 0.15;
+  }
+  70% {
+    opacity: 0.5;
+  }
+  90% {
+    opacity: 0.75;
+  }
+  100% {
+    opacity: 1;
+  }
+}
