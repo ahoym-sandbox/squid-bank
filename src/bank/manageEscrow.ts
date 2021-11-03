@@ -20,7 +20,6 @@ function fromHex(hex: string) {
 }
 
 export function parseEscrowDataFromMemos(memos: any) {
-  console.log(memos);
   return {
     playerAddress: fromHex(memos[0].Memo.MemoData),
     condition: fromHex(memos[1].Memo.MemoData),
