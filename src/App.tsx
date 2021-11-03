@@ -1,52 +1,71 @@
-import { useEffect, useState } from 'react';
-import './App.css';
-import logo from './logo.svg';
-import { xrplClient, xrplClientTwo } from './XrplApiSandbox';
+import { useEffect, useState } from "react";
+import "./App.css";
+import logo from "./logo.svg";
+import { xrplClient } from "./XrplApiSandbox";
+import {
+  createConditionalEscrow,
+  parseEscrowDataFromMemos,
+} from "./bank/manageEscrow";
+
+const ORACLE_WALLET = "rnn6aoehGjuibE1BFXbjFWnzFdeN3EmRix";
+const POT_AMOUNT = 100;
 
 // Can import and run TS scripts this way if so desired
 // import './XrplApiSandbox/scripts/sendXrp';
 // import './XrplApiSandbox/scripts/sendEscrow';
 
-// Generate testnet wallets
-const generateWalletRequestOne = xrplClient.generateFaucetWallet();
-const generateWalletRequestTwo = xrplClientTwo.generateFaucetWallet();
+// Generate testnet wallet
+const generateBankWalletRequest = xrplClient.generateFaucetWallet();
 
 function App() {
   const [logs, setLogs] = useState<unknown[]>([]);
 
   useEffect(() => {
-    generateWalletRequestOne.then((result) => {
+    generateBankWalletRequest.then((result) => {
       setLogs((logState) => [
         result,
-        'Created faucet wallet for Client 1',
+        "Created faucet wallet for Bank",
         ...logState,
       ]);
     });
   }, []);
 
   useEffect(() => {
-    generateWalletRequestTwo.then((result) => {
-      setLogs((logState) => [
-        result,
-        'Created faucet wallet for Client 2',
-        ...logState,
-      ]);
-    });
-  }, []);
+    xrplClient.subscribeToAccountTransactions(
+      {
+        accounts: [ORACLE_WALLET],
+      },
+      async (event: any) => {
+        if ("AccountSet" === event["transaction"].TransactionType) {
+          const memos = event["transaction"].Memos;
+          const { playerAddress, condition } = parseEscrowDataFromMemos(memos);
 
-  useEffect(() => {
-    // After testnet wallet creations, send a 22 XRP payment
-    Promise.all([generateWalletRequestOne, generateWalletRequestTwo])
-      .then(() =>
-        xrplClient.sendPayment(22, xrplClientTwo.wallet()?.account.address!)
-      )
-      .then((result) => {
-        setLogs((logState) => [
-          result,
-          'Sent transaction from Wallet 1 to Wallet 2',
-          ...logState,
-        ]);
-      });
+          if (playerAddress && condition) {
+            setLogs((logState) => [
+              {
+                playerAddress,
+                condition,
+              },
+              "Received new Escrow condition",
+              ...logState,
+            ]);
+
+            const playerEscrow = await createConditionalEscrow(
+              POT_AMOUNT,
+              playerAddress,
+              condition
+            );
+
+            setLogs((logState) => [
+              playerEscrow,
+              "Created new Player Escrow",
+              ...logState,
+            ]);
+          }
+        }
+        return Promise.resolve(event);
+      }
+    );
   }, []);
 
   return (
@@ -56,13 +75,13 @@ function App() {
 
         <div className="App-logs">
           {logs.map((log) => {
-            if (typeof log === 'string') {
+            if (typeof log === "string") {
               return (
                 <p key={Math.random()} className="App-console-log">
                   {log}
                 </p>
               );
-            } else if (typeof log === 'object') {
+            } else if (typeof log === "object") {
               return (
                 <div key={Math.random()}>
                   <pre>{JSON.stringify(log, null, 2)}</pre>

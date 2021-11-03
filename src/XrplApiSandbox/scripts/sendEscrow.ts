@@ -1,16 +1,16 @@
-import { xrplClient, xrplClientTwo } from '../index';
-import { logMessageAndPass } from '../utilities';
+import { xrplClient, xrplClientTwo } from "../index";
+import { logMessageAndPass } from "../utilities";
 
 // Generate testnet wallets
 const generateWalletRequestOne = xrplClient
   .generateFaucetWallet()
   .then(
-    logMessageAndPass('TimeHeldEscrow -- Created faucet wallet for Client 1')
+    logMessageAndPass("TimeHeldEscrow -- Created faucet wallet for Client 1")
   );
 const generateWalletRequestTwo = xrplClientTwo
   .generateFaucetWallet()
   .then(
-    logMessageAndPass('TimeHeldEscrow -- Created faucet wallet for Client 2')
+    logMessageAndPass("TimeHeldEscrow -- Created faucet wallet for Client 2")
   );
 
 const ESCROW_DELAY = 20; // seconds
@@ -22,7 +22,7 @@ let offerSequence: number;
 // After testnet wallet creations, send a 22 XRP payment
 Promise.all([generateWalletRequestOne, generateWalletRequestTwo])
   .then(() =>
-    xrplClient.createEscrow(
+    xrplClient.createTimeBasedEscrow(
       50,
       xrplClientTwo.wallet()?.account.address!,
       RELEASE_DATE_IN_SECONDS
@@ -30,12 +30,12 @@ Promise.all([generateWalletRequestOne, generateWalletRequestTwo])
   )
   .then(
     logMessageAndPass(
-      'TimeHeldEscrow -- Created time held escrow from Wallet 1 to Wallet 2'
+      "TimeHeldEscrow -- Created time held escrow from Wallet 1 to Wallet 2"
     )
   )
   .then((transactionEvent: any) => {
     offerSequence = transactionEvent.transaction.Sequence;
-    console.log('TimeHeldEscrow -- Waiting for escrow time', offerSequence);
+    console.log("TimeHeldEscrow -- Waiting for escrow time", offerSequence);
     return offerSequence;
   })
   .then(
@@ -46,7 +46,7 @@ Promise.all([generateWalletRequestOne, generateWalletRequestTwo])
   )
   .then(
     logMessageAndPass(
-      'TimeHeldEscrow -- Attempting to finish escrow in Wallet 2'
+      "TimeHeldEscrow -- Attempting to finish escrow in Wallet 2"
     )
   )
   .then(() => {
@@ -56,5 +56,5 @@ Promise.all([generateWalletRequestOne, generateWalletRequestTwo])
     );
   })
   .then(
-    logMessageAndPass('TimeHeldEscrow -- Finished time held escrow in Wallet 2')
+    logMessageAndPass("TimeHeldEscrow -- Finished time held escrow in Wallet 2")
   );
