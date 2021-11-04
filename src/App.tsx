@@ -1,13 +1,12 @@
 import { useEffect, useState } from 'react';
 import './App.css';
-import { xrplClient } from './XrplApiSandbox';
 import {
   createConditionalEscrow,
   parseEscrowDataFromMemos,
 } from './bank/manageEscrow';
 import { Circle } from './shapes/Circle';
 import { Triangle } from './shapes/Triangle';
-import { Square } from './shapes/Square';
+import { xrplClient } from './XrplApiSandbox';
 
 const ORACLE_WALLET = 'rgbv6kNj77J9DTjZM39Q5xi1pzufv13g1';
 const POT_AMOUNT = 100;
@@ -52,15 +51,15 @@ function App() {
               ...logState,
             ]);
 
-            createConditionalEscrow(POT_AMOUNT, playerAddress, condition).then(
-              (playerEscrow) => {
+            createConditionalEscrow(POT_AMOUNT, playerAddress, condition)
+              .then((playerEscrow) => {
                 setLogs((logState) => [
                   playerEscrow,
                   'Created new Player Escrow',
                   ...logState,
                 ]);
-              }
-            );
+              })
+              .catch((err) => console.log(err));
           }
         }
         return Promise.resolve(event);
