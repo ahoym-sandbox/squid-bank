@@ -75,7 +75,7 @@ function App() {
         <Triangle />
         <img
           src={process.env.PUBLIC_URL + '/piggy_bank.jpg'}
-          className="App-logo"
+          className="App-logo Square"
           alt="logo"
         />
       </div>
